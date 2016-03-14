@@ -1,13 +1,3 @@
-;(add-to-list 'load-path "/path/to/git-modes")
-(add-to-list 'load-path "~/.emacs.d/lisp/magit")
-(eval-after-load 'info
-  '(progn (info-initialize)
-          (add-to-list 'Info-directory-list "~/.emacs.d/lisp/magit")))
-
-;(require 'magit)
-;(require 'git-gutter)
-
-
 (req_package 'magit)
 (req_package 'git-gutter)
 
