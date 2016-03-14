@@ -2,3 +2,4 @@
 .emacs.d/backups/
 .emacs.d/ido.last
 .emacs.d/places
+.emacs.d/ensime
