@@ -3,9 +3,13 @@
 (eval-after-load 'info
   '(progn (info-initialize)
           (add-to-list 'Info-directory-list "~/.emacs.d/lisp/magit")))
-(require 'magit)
 
-(require 'git-gutter)
+;(require 'magit)
+;(require 'git-gutter)
+
+
+(req_package 'magit)
+(req_package 'git-gutter)
 
 ;; If you enable global minor mode
 (global-git-gutter-mode t)
