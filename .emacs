@@ -29,10 +29,11 @@
 ;; refresh package list if it is not already available
 (when (not package-archive-contents) (package-refresh-contents))
 
-(defun req_package (package)
-  (unless (package-installed-p package)
-    (package-install package))
-    (require 'package))
+(defun req_package (package_name)
+  (unless (package-installed-p package_name)
+    (package-install package_name))
+    (require package_name)
+    )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; load plugins
