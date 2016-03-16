@@ -29,15 +29,12 @@
 ;; refresh package list if it is not already available
 (when (not package-archive-contents) (package-refresh-contents))
 
-(defun req_package (package_name)
-  (unless (package-installed-p package_name)
-    (package-install package_name))
-    (require package_name)
-    )
+ (defun req_package (package_name)
+   (unless (package-installed-p package_name)
+     (package-install package_name))
+     (require package_name)
+     )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; load plugins
 (load-directory "~/.emacs.d/plugins")
-
-
-
