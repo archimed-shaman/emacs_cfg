@@ -43,6 +43,9 @@
 ;; ide-like plugin for scala
 (req_package 'ensime)
 
+;; auto complete brackets
+(electric-pair-mode 1)
+
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 (add-hook 'scala-mode-hook '(lambda () (fic-mode 1)))
 
