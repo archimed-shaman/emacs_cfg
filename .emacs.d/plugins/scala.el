@@ -44,7 +44,10 @@
 (req_package 'ensime)
 
 ;; auto complete brackets
-(electric-pair-mode 1)
+(setq skeleton-pair t)
+(global-set-key "(" 'skeleton-pair-insert-maybe)
+(global-set-key "[" 'skeleton-pair-insert-maybe)
+(global-set-key "{" 'skeleton-pair-insert-maybe)
 
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 (add-hook 'scala-mode-hook '(lambda () (fic-mode 1)))
