@@ -40,6 +40,10 @@
 
 ;; highlight FIXME, TODO, etc
 (req_package 'fic-mode)
+
+;; fucken hacks for ensime - it doesn't get it as dependency
+(req_package 'expand-region)
+(req_package 'helm)
 ;; ide-like plugin for scala
 (req_package 'ensime)
 
