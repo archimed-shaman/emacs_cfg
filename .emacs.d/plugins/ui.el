@@ -2,7 +2,11 @@
 ;; ui
 ;; font size for notebook
 (req_package 'better-defaults)
-(set-face-attribute 'default nil :height 80)
+(ido-mode 1)
+
+;;(set-face-attribute 'default nil :height 80)
+;;(set-face-attribute 'default nil :family "Inconsolata" :height 80 :weight 'bold)
+(set-face-attribute 'default nil :family "Inconsolata" :height 100 :weight 'bold)
 
 ;; scroll for one string
 (setq scroll-step 1)
