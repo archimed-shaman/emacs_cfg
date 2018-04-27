@@ -1,12 +1,20 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ui
+
+;; no startup msg  
+(setq inhibit-startup-message t)
+(setq inhibit-startup-screen t)
+;; Make *scratch* buffer blank.
+(setq initial-scratch-message nil)
+
+
 ;; font size for notebook
 (req_package 'better-defaults)
 (ido-mode 1)
 
-;;(set-face-attribute 'default nil :height 80)
-;;(set-face-attribute 'default nil :family "Inconsolata" :height 80 :weight 'bold)
 (set-face-attribute 'default nil :family "Inconsolata" :height 100 :weight 'bold)
+;; (set-face-attribute 'default nil :height 80) ;; for big monitor
+;; (set-face-attribute 'default nil :height 70) ;; for notebook
 
 ;; scroll for one string
 (setq scroll-step 1)
