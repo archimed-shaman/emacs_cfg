@@ -55,5 +55,6 @@
 
 (add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
 (add-hook 'scala-mode-hook '(lambda () (fic-mode 1)))
+(set 'ensime-startup-notification nil)
 
 (provide 'scala-loader)
