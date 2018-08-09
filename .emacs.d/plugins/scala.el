@@ -40,12 +40,25 @@
 
 ;; highlight FIXME, TODO, etc
 (req_package 'fic-mode)
-
-;; fucken hacks for ensime - it doesn't get it as dependency
-(req_package 'expand-region)
-(req_package 'helm)
+(req_package 'scala-mode)
+(req_package 'sbt-mode)
 ;; ide-like plugin for scala
 (req_package 'ensime)
+
+
+(use-package ensime
+  :ensure t
+  :pin melpa-stable)
+(set 'ensime-startup-notification nil)
+
+(use-package scala-mode
+  :interpreter
+  ("scala" . scala-mode))
+
+
+;; For complex scala files
+(setq max-lisp-eval-depth 50000)
+(setq max-specpdl-size 5000)
 
 ;; auto complete brackets
 (setq skeleton-pair t)
@@ -53,8 +66,11 @@
 (global-set-key "[" 'skeleton-pair-insert-maybe)
 (global-set-key "{" 'skeleton-pair-insert-maybe)
 
-(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
-(add-hook 'scala-mode-hook '(lambda () (fic-mode 1)))
-(set 'ensime-startup-notification nil)
+;(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
+(add-hook 'scala-mode-hook '(lambda () 
+                                    (fic-mode 1)
+                                    (setq prettify-symbols-alist scala-prettify-symbols-alist)
+                                    (prettify-symbols-mode)
+                            ))
 
 (provide 'scala-loader)

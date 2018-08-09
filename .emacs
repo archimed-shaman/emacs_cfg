@@ -17,7 +17,8 @@
 (require 'package)
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
                          ("marmalade" . "https://marmalade-repo.org/packages/")
-                         ("melpa" . "http://melpa.org/packages/")))
+                         ("melpa" . "http://melpa.org/packages/")
+			 ("melpa-stable" . "http://stable.melpa.org/packages/")))
 (package-initialize)
 
 (let ((default-directory "~/.emacs.d/elpa/"))
@@ -48,7 +49,7 @@
  '(git-gutter:modified-sign " ")
  '(package-selected-packages
    (quote
-    (magit helm git-gutter fic-mode expand-region ensime color-theme better-defaults))))
+    (ensime color-theme better-defaults fic-mode git-gutter magit))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
