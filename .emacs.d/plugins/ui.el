@@ -69,3 +69,6 @@
  (blink-cursor-mode 0)
 
 (provide 'ui-loader)
+
+;; set default browser
+(setq browse-url-browser-function 'browse-url-chromium)

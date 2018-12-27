@@ -9,7 +9,6 @@
 (req_package 'multi-compile)
 (req_package 'go-eldoc)
 (req_package 'company-go)
-(req_package 'use-package)
 
 
 (use-package go-mode

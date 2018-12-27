@@ -44,7 +44,6 @@
 (req_package 'sbt-mode)
 ;; ide-like plugin for scala
 (req_package 'ensime)
-(req_package 'use-package)
 
 
 (use-package ensime

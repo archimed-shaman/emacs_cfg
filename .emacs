@@ -49,7 +49,7 @@
  '(git-gutter:modified-sign " ")
  '(package-selected-packages
    (quote
-    (ensime color-theme better-defaults fic-mode git-gutter magit))))
+    (company-c-headers company-irony-c-headers company-irony irony ensime color-theme better-defaults fic-mode git-gutter magit))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
