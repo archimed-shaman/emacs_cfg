@@ -1,7 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; go
 
-
+(req_package 'use-package)
 (req_package 'fic-mode)
 (req_package 'company)
 (req_package 'flycheck)
@@ -10,6 +10,11 @@
 (req_package 'go-eldoc)
 (req_package 'company-go)
 
+
+;; do:
+;; go get -u github.com/mdempsky/gocode
+
+(setq exec-path (append exec-path '("~/go/bin")))
 
 (use-package go-mode
   :interpreter

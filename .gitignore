@@ -4,3 +4,4 @@
 .emacs.d/places
 .emacs.d/ensime
 .emacs.d/auto-save-list/
+.emacs.d/transient
