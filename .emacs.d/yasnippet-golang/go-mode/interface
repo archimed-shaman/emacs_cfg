@@ -1,6 +1,6 @@
 # -*- mode: snippet -*-
 # name: interface
-# key: type
+# key: interface
 # contributor : @atotto
 # --
 type $1 interface {

@@ -1,0 +1,10 @@
+# -*- mode: snippet -*-
+# name: func
+# key: meth
+# contributor : @archimed-shaman
+# --
+
+
+func ( *$2) $1() {
+	$0
+}

@@ -4,6 +4,6 @@
 # contributor : @atotto
 # --
 
-func (this *$2) $1() {
+func $1() {
 	$0
 }

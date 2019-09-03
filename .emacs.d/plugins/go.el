@@ -1,6 +1,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; go
 
+(req_package 'golint)
 (req_package 'use-package)
 (req_package 'fic-mode)
 (req_package 'company)
@@ -34,9 +35,28 @@
 (add-hook 'before-save-hook 'gofmt-before-save)
 (setq-default gofmt-command "goimports")
 (add-hook 'go-mode-hook 'go-eldoc-setup)
+
+
 (add-hook 'go-mode-hook (lambda ()
                             (set (make-local-variable 'company-backends) '(company-go))
                             (company-mode)))
+(setq company-idle-delay .2)
+(custom-set-faces
+ '(company-preview
+   ((t (:foreground "darkgray" :underline t))))
+ '(company-preview-common
+   ((t (:inherit company-preview))))
+ '(company-tooltip
+   ((t (:background "lightgray" :foreground "black"))))
+ '(company-tooltip-selection
+   ((t (:background "steelblue" :foreground "white"))))
+ '(company-tooltip-common
+   ((((type x)) (:inherit company-tooltip :weight bold))
+    (t (:inherit company-tooltip))))
+ '(company-tooltip-common-selection
+   ((((type x)) (:inherit company-tooltip-selection :weight bold))
+    (t (:inherit company-tooltip-selection)))))
+
 (add-hook 'go-mode-hook 'yas-minor-mode)
 
 
@@ -51,5 +71,8 @@
 
 
 (add-hook 'go-mode-hook '(lambda () (fic-mode 1)))
+
+;(add-to-list 'load-path (concat (getenv "GOPATH")  "/src/github.com/golang/lint/misc/emacs"))
+
 
 (provide 'go-loader)
