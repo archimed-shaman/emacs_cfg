@@ -11,7 +11,7 @@
 (req_package 'company-go)
 (req_package 'yasnippet)
 
-(add-to-list 'yas-snippet-dirs "/home/archimed/dev/emacs_cfg/.emacs.d/yasnippet-golang/")
+(add-to-list 'yas-snippet-dirs "~/.emacs.d/yasnippet-golang/")
 (yas-reload-all)
 (set 'yas-global-mode 1)
 
@@ -40,7 +40,7 @@
 (add-hook 'go-mode-hook (lambda ()
                             (set (make-local-variable 'company-backends) '(company-go))
                             (company-mode)))
-(setq company-idle-delay .2)
+(setq company-idle-delay .0)
 (custom-set-faces
  '(company-preview
    ((t (:foreground "darkgray" :underline t))))

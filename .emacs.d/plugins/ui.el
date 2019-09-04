@@ -10,9 +10,8 @@
 
 ;; font size for notebook
 (req_package 'better-defaults)
-;; (set-face-attribute 'default nil :height 80) ;; for big monitor
-;; (set-face-attribute 'default nil :family "Inconsolata" :height 130)
-(set-face-attribute 'default nil :family "Inconsolata" :height 130 :weight 'bold)
+;(set-face-attribute 'default nil :family "Inconsolata" :height 130 :weight 'bold)
+(set-face-attribute 'default nil :family "Inconsolata" :height 100 :weight 'bold)
 
 ;; scroll for one string
 (setq scroll-step 1)
@@ -49,7 +48,7 @@
 
 
 ;; color scheme
-(req_package 'color-theme)
+(req_package 'color-theme-modern)
 (setq color-theme-load-all-themes nil)
 (require 'tango-dark-theme)
 
