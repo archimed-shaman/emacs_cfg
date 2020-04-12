@@ -40,20 +40,68 @@
 
 ;; highlight FIXME, TODO, etc
 (req_package 'fic-mode)
+(req_package 'lsp-mode)
+(req_package 'lsp-ui)
+(req_package 'company-lsp)
 (req_package 'scala-mode)
 (req_package 'sbt-mode)
+(req_package 'use-package)
+
 ;; ide-like plugin for scala
-(req_package 'ensime)
+;;(req_package 'ensime)
 
 
-(use-package ensime
-  :ensure t
-  :pin melpa-stable)
-(set 'ensime-startup-notification nil)
+;;(use-package ensime
+;;  :ensure t
+;;  :pin melpa-stable)
+;;(set 'ensime-startup-notification nil)
+
+;;(use-package scala-mode
+;;  :interpreter
+;;  ("scala" . scala-mode))
+
+
+;; Enable defer and ensure by default for use-package
+;; Keep auto-save/backup files separate from source code:  https://github.com/scalameta/metals/issues/1027
+(setq use-package-always-defer t
+      use-package-always-ensure t
+      backup-directory-alist `((".*" . ,temporary-file-directory))
+      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
 (use-package scala-mode
-  :interpreter
-  ("scala" . scala-mode))
+  :mode "\\.s\\(cala\\|bt\\)$")
+
+(use-package sbt-mode
+  :commands sbt-start sbt-command
+  :config
+  ;; WORKAROUND: https://github.com/ensime/emacs-sbt-mode/issues/31
+  ;; allows using SPACE when in the minibuffer
+  (substitute-key-definition
+   'minibuffer-complete-word
+   'self-insert-command
+   minibuffer-local-completion-map)
+  ;; sbt-supershell kills sbt-mode:  https://github.com/hvesalai/emacs-sbt-mode/issues/152
+  (setq sbt:program-options '("-Dsbt.supershell=false"))
+  )
+
+;; Enable nice rendering of diagnostics like compile errors.
+(use-package flycheck
+  :init (global-flycheck-mode))
+
+(use-package lsp-mode
+  ;; Optional - enable lsp-mode automatically in scala files
+  :hook (scala-mode . lsp)
+  :config (setq lsp-prefer-flymake nil))
+
+(use-package lsp-ui)
+
+;; lsp-mode supports snippets, but in order for them to work you need to use yasnippet
+;; If you don't want to use snippets set lsp-enable-snippet to nil in your lsp-mode settings
+;;   to avoid odd behavior with snippets and indentation
+(use-package yasnippet)
+
+;; Add company-lsp backend for metals
+(use-package company-lsp)
 
 
 ;; For complex scala files
@@ -67,10 +115,14 @@
 (global-set-key "{" 'skeleton-pair-insert-maybe)
 
 ;(add-hook 'scala-mode-hook 'ensime-scala-mode-hook)
-(add-hook 'scala-mode-hook '(lambda () 
-                                    (fic-mode 1)
-                                    (setq prettify-symbols-alist scala-prettify-symbols-alist)
-                                    (prettify-symbols-mode)
-                            ))
+(add-hook 'scala-mode-hook '(lambda ()
+                              (fic-mode 1)
+                              (setq prettify-symbols-alist scala-prettify-symbols-alist)
+                              (prettify-symbols-mode)
+                              (add-hook 'before-save-hook 'scalafmt-before-save)
+                              ))
+
+(defun scalafmt-before-save ()
+  (lsp-format-buffer))
 
 (provide 'scala-loader)

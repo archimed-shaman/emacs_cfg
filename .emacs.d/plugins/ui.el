@@ -11,7 +11,8 @@
 ;; font size for notebook
 (req_package 'better-defaults)
 ;(set-face-attribute 'default nil :family "Inconsolata" :height 130 :weight 'bold)
-(set-face-attribute 'default nil :family "Inconsolata" :height 100 :weight 'bold)
+;; (set-face-attribute 'default nil :family "Inconsolata" :height 100 :weight 'bold)
+(set-face-attribute 'default nil :family "iosevka-ss01" :height 100 :weight 'bold)
 
 ;; scroll for one string
 (setq scroll-step 1)

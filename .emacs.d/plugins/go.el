@@ -8,6 +8,7 @@
 (req_package 'flycheck)
 (req_package 'multi-compile)
 (req_package 'go-eldoc)
+(req_package 'go-impl)
 (req_package 'company-go)
 (req_package 'yasnippet)
 
@@ -16,9 +17,14 @@
 (set 'yas-global-mode 1)
 
 ;; do:
-;; go get -u github.com/mdempsky/gocode
+;; go get -u github.com/nsf/gocode
+;; go get -u golang.org/x/tools/cmd/goimports
+;; go get -u github.com/josharian/impl
+;; go get -u golang.org/x/tools/cmd/godoc
 
 (setenv "GOPATH" (concat (getenv "HOME") "/go"))
+(setenv "GOPRIVATE" "github.com/archimed-shaman")
+;; (setq exec-path (append exec-path '(concat (getenv "GOPATH") "/bin")))
 (setq exec-path (append exec-path '("~/go/bin")))
 
 (use-package go-mode
@@ -72,7 +78,7 @@
 
 (add-hook 'go-mode-hook '(lambda () (fic-mode 1)))
 
-;(add-to-list 'load-path (concat (getenv "GOPATH")  "/src/github.com/golang/lint/misc/emacs"))
+;; (add-to-list 'load-path (concat (getenv "GOPATH")  "/src/github.com/golang/lint/misc/emacs"))
 
 
 (provide 'go-loader)
