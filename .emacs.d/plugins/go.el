@@ -9,8 +9,11 @@
 (req_package 'multi-compile)
 (req_package 'go-eldoc)
 (req_package 'go-impl)
+(req_package 'go-mode)
+(req_package 'go-rename)
 (req_package 'company-go)
 (req_package 'yasnippet)
+(req_package 'flycheck-golangci-lint)
 
 (add-to-list 'yas-snippet-dirs "~/.emacs.d/yasnippet-golang/")
 (yas-reload-all)
@@ -44,8 +47,8 @@
 
 
 (add-hook 'go-mode-hook (lambda ()
-                            (set (make-local-variable 'company-backends) '(company-go))
-                            (company-mode)))
+                          (set (make-local-variable 'company-backends) '(company-go))
+                          (company-mode)))
 (setq company-idle-delay .0)
 (custom-set-faces
  '(company-preview
@@ -67,18 +70,26 @@
 
 
 (add-hook 'go-mode-hook 'flycheck-mode)
+;; (eval-after-load 'flycheck
+;;   '(add-hook 'flycheck-mode-hook #'flycheck-golangci-lint-setup))
+;; (add-hook 'flycheck-mode-hook #'flycheck-golangci-lint-setup)
+
 (setq multi-compile-alist '(
-    (go-mode . (
-("go-build" "go build -v"
-   (locate-dominating-file buffer-file-name ".git"))
-("go-build-and-run" "go build -v && echo 'build finish' && eval ./${PWD##*/}"
-   (multi-compile-locate-file-dir ".git"))))
-    ))
+                            (go-mode . (
+                                        ("go-build" "go build -v"
+                                         (locate-dominating-file buffer-file-name ".git"))
+                                        ("go-build-and-run" "go build -v && echo 'build finish' && eval ./${PWD##*/}"
+                                         (multi-compile-locate-file-dir ".git"))))
+                            ))
 
 
 (add-hook 'go-mode-hook '(lambda () (fic-mode 1)))
 
-;; (add-to-list 'load-path (concat (getenv "GOPATH")  "/src/github.com/golang/lint/misc/emacs"))
+(add-hook 'go-mode-hook
+          '(lambda() 
+             (setq indent-tabs-mode t)
+             )
+          )
 
 
 (provide 'go-loader)
