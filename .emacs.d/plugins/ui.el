@@ -57,6 +57,11 @@
 (set-face-background 'hl-line "#3e4446")
 (set-face-foreground 'highlight nil)
 
+;; set color for lsp highlight
+(set-face-attribute 'lsp-face-highlight-textual nil
+		    :background "#666" :foreground "#ffffff"
+                   )
+
 
 ;; window moving by alt+arrows
 ;(windmove-default-keybindings 'meta)

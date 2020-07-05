@@ -1,19 +1,61 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; go
 
-(req_package 'golint)
+;; (req_package 'golint)
 (req_package 'use-package)
+(req_package 'lsp-mode)
+(req_package 'lsp-ui)
 (req_package 'fic-mode)
 (req_package 'company)
-(req_package 'flycheck)
-(req_package 'multi-compile)
-(req_package 'go-eldoc)
-(req_package 'go-impl)
+(req_package 'company-lsp)
+;; (req_package 'flycheck)
+;; (req_package 'multi-compile)
+;; (req_package 'go-eldoc)
+;; (req_package 'go-impl)
 (req_package 'go-mode)
-(req_package 'go-rename)
-(req_package 'company-go)
+;; (req_package 'go-rename)
+;; (req_package 'company-go)
 (req_package 'yasnippet)
-(req_package 'flycheck-golangci-lint)
+;; (req_package 'flycheck-golangci-lint)
+
+
+(use-package lsp-mode
+  :ensure t
+  :commands (lsp lsp-deferred)
+  :hook (go-mode . lsp-deferred))
+
+;; Set up before-save hooks to format buffer and add/delete imports.
+;; Make sure you don't have other gofmt/goimports hooks enabled.
+(defun lsp-go-install-save-hooks ()
+  (add-hook 'before-save-hook #'lsp-format-buffer t t)
+  (add-hook 'before-save-hook #'lsp-organize-imports t t))
+(add-hook 'go-mode-hook #'lsp-go-install-save-hooks)
+
+;; Optional - provides fancier overlays.
+(use-package lsp-ui
+  :ensure t
+  :commands lsp-ui-mode)
+
+;; Company mode is a standard completion package that works well with lsp-mode.
+(use-package company
+  :ensure t
+  :config
+  ;; Optionally enable completion-as-you-type behavior.
+  (setq company-idle-delay 0)
+  (setq company-minimum-prefix-length 1))
+
+;; company-lsp integrates company mode completion with lsp-mode.
+;; completion-at-point also works out of the box but doesn't support snippets.
+(use-package company-lsp
+  :ensure t
+  :commands company-lsp)
+
+;; Optional - provides snippet support.
+(use-package yasnippet
+  :ensure t
+  :commands yas-minor-mode
+  :hook (go-mode . yas-minor-mode))
+
 
 (add-to-list 'yas-snippet-dirs "~/.emacs.d/yasnippet-golang/")
 (yas-reload-all)
@@ -24,16 +66,17 @@
 ;; go get -u golang.org/x/tools/cmd/goimports
 ;; go get -u github.com/josharian/impl
 ;; go get -u golang.org/x/tools/cmd/godoc
+;; GO111MODULE=on go get golang.org/x/tools/gopls@latest
+
 
 (setenv "GOPATH" (concat (getenv "HOME") "/go"))
 (setenv "GOPRIVATE" "github.com/archimed-shaman")
-;; (setq exec-path (append exec-path '(concat (getenv "GOPATH") "/bin")))
+(setq exec-path (append exec-path '(concat (getenv "GOPATH") "/bin")))
 (setq exec-path (append exec-path '("~/go/bin")))
 
-(use-package go-mode
-  :interpreter
-  ("go" . go-mode))
-
+(lsp-register-custom-settings
+ '(("gopls.completeUnimported" t t)
+   ("gopls.staticcheck" t t)))
 
 ;; auto complete brackets
 (setq skeleton-pair t)
@@ -43,53 +86,14 @@
 
 (add-hook 'before-save-hook 'gofmt-before-save)
 (setq-default gofmt-command "goimports")
-(add-hook 'go-mode-hook 'go-eldoc-setup)
+;; (add-hook 'go-mode-hook 'go-eldoc-setup)
 
 
-(add-hook 'go-mode-hook (lambda ()
-                          (set (make-local-variable 'company-backends) '(company-go))
-                          (company-mode)))
-(setq company-idle-delay .0)
-(custom-set-faces
- '(company-preview
-   ((t (:foreground "darkgray" :underline t))))
- '(company-preview-common
-   ((t (:inherit company-preview))))
- '(company-tooltip
-   ((t (:background "lightgray" :foreground "black"))))
- '(company-tooltip-selection
-   ((t (:background "steelblue" :foreground "white"))))
- '(company-tooltip-common
-   ((((type x)) (:inherit company-tooltip :weight bold))
-    (t (:inherit company-tooltip))))
- '(company-tooltip-common-selection
-   ((((type x)) (:inherit company-tooltip-selection :weight bold))
-    (t (:inherit company-tooltip-selection)))))
-
-(add-hook 'go-mode-hook 'yas-minor-mode)
-
-
-(add-hook 'go-mode-hook 'flycheck-mode)
-;; (eval-after-load 'flycheck
-;;   '(add-hook 'flycheck-mode-hook #'flycheck-golangci-lint-setup))
-;; (add-hook 'flycheck-mode-hook #'flycheck-golangci-lint-setup)
-
-(setq multi-compile-alist '(
-                            (go-mode . (
-                                        ("go-build" "go build -v"
-                                         (locate-dominating-file buffer-file-name ".git"))
-                                        ("go-build-and-run" "go build -v && echo 'build finish' && eval ./${PWD##*/}"
-                                         (multi-compile-locate-file-dir ".git"))))
-                            ))
-
+;; (add-hook 'go-mode-hook 'yas-minor-mode)
 
 (add-hook 'go-mode-hook '(lambda () (fic-mode 1)))
 
-(add-hook 'go-mode-hook
-          '(lambda() 
-             (setq indent-tabs-mode t)
-             )
-          )
+(add-hook 'go-mode-hook '(lambda() (setq indent-tabs-mode t)))
 
 
 (provide 'go-loader)
