@@ -67,6 +67,7 @@
 ;; go get -u github.com/josharian/impl
 ;; go get -u golang.org/x/tools/cmd/godoc
 ;; GO111MODULE=on go get golang.org/x/tools/gopls@latest
+;; go get golang.org/x/tools/gopls@latest
 
 
 (setenv "GOPATH" (concat (getenv "HOME") "/go"))
