@@ -51,7 +51,8 @@
 ;; color scheme
 (req_package 'color-theme-modern)
 (setq color-theme-load-all-themes nil)
-(require 'tango-dark-theme)
+(load-theme 'tango-dark t) ;; t - for no-confirm
+;; (require 'tango-dark-theme)
 
 ;; set the current line highlight color
 (set-face-background 'hl-line "#3e4446")
@@ -70,8 +71,8 @@
 (global-set-key (kbd "C-c <up>")    'windmove-up)
 (global-set-key (kbd "C-c <down>")  'windmove-down)
 
-;; turn off blinking cursor
- (blink-cursor-mode 0)
+;; turn on blinking cursor
+ (blink-cursor-mode 1)
 
 (provide 'ui-loader)
 

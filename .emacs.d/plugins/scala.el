@@ -41,10 +41,13 @@
 ;; highlight FIXME, TODO, etc
 (req_package 'fic-mode)
 (req_package 'lsp-mode)
+(req_package 'lsp-metals)
 (req_package 'lsp-ui)
 (req_package 'company-lsp)
 (req_package 'scala-mode)
 (req_package 'sbt-mode)
+(req_package 'gradle-mode)
+(req_package 'groovy-mode) ;; for gradle
 (req_package 'use-package)
 
 ;; ide-like plugin for scala
@@ -69,7 +72,15 @@
       auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
 
 (use-package scala-mode
-  :mode "\\.s\\(cala\\|bt\\)$")
+  :mode (("\\.s\\(cala\\|bt\\)$" . scala-mode)
+         ("\\.\\(gradle\\)$" . scala-mode)
+         ))
+
+;; (add-hook 'gradle-mode-hook '(lambda ()
+;;                                (scala-mode)
+;;                                (groovy-mode)
+;;                               ))
+
 
 (use-package sbt-mode
   :commands sbt-start sbt-command
