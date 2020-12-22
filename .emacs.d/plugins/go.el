@@ -68,6 +68,8 @@
 ;; go get -u golang.org/x/tools/cmd/godoc
 ;; GO111MODULE=on go get golang.org/x/tools/gopls@latest
 ;; go get golang.org/x/tools/gopls@latest
+;; GO111MODULE=on go get mvdan.cc/gofumpt
+;; GO111MODULE=on go get mvdan.cc/gofumpt/gofumports
 
 
 (setenv "GOPATH" (concat (getenv "HOME") "/go"))
@@ -86,7 +88,7 @@
 (global-set-key "{" 'skeleton-pair-insert-maybe)
 
 (add-hook 'before-save-hook 'gofmt-before-save)
-(setq-default gofmt-command "goimports")
+(setq-default gofmt-command "gofumports")
 ;; (add-hook 'go-mode-hook 'go-eldoc-setup)
 
 
