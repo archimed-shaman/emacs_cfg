@@ -43,8 +43,10 @@
 (req_package 'lsp-mode)
 (req_package 'lsp-metals)
 (req_package 'lsp-ui)
-(req_package 'company-lsp)
+(req_package 'company)
 (req_package 'scala-mode)
+(req_package 'posframe)
+(req_package 'dap-mode)
 (req_package 'sbt-mode)
 (req_package 'gradle-mode)
 (req_package 'groovy-mode) ;; for gradle
@@ -111,13 +113,29 @@
 ;;   to avoid odd behavior with snippets and indentation
 (use-package yasnippet)
 
-;; Add company-lsp backend for metals
-(use-package company-lsp)
-
+;; Use company-capf as a completion provider.
+;;
+;; To Company-lsp users:
+;;   Company-lsp is no longer maintained and has been removed from MELPA.
+;;   Please migrate to company-capf.
+(use-package company
+  :hook (scala-mode . company-mode)
+  :config
+  (setq lsp-completion-provider :capf))
 
 ;; For complex scala files
-(setq max-lisp-eval-depth 50000)
-(setq max-specpdl-size 5000)
+;; (setq max-lisp-eval-depth 50000)
+;; (setq max-specpdl-size 5000)
+
+;; Use the Debug Adapter Protocol for running tests and debugging
+(use-package posframe
+  ;; Posframe is a pop-up tool that must be manually installed for dap-mode
+  )
+(use-package dap-mode
+  :hook
+  (lsp-mode . dap-mode)
+  (lsp-mode . dap-ui-mode)
+  )
 
 ;; auto complete brackets
 (setq skeleton-pair t)
