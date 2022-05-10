@@ -78,3 +78,6 @@
 
 ;; set default browser
 (setq browse-url-browser-function 'browse-url-chromium)
+
+;; reload buffers on change
+(global-auto-revert-mode t)
