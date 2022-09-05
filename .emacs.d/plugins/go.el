@@ -53,8 +53,8 @@
 (global-set-key "{" 'skeleton-pair-insert-maybe)
 
 (add-hook 'before-save-hook 'gofmt-before-save)
-(add-hook 'before-save-hook #'lsp-format-buffer)
-(add-hook 'before-save-hook #'lsp-organize-imports)
+(add-hook 'before-save-hook 'lsp-format-buffer)
+(add-hook 'before-save-hook 'lsp-organize-imports)
 (setq-default gofmt-command "gofumpt")
 
 
