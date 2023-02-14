@@ -37,6 +37,9 @@
      (require package_name)
      )
 
+;; Set PATH
+(setq exec-path (append exec-path '("/home/archimed/.bin" "/home/archimed/.local/bin")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; load plugins
 (load-directory "~/.emacs.d/plugins")

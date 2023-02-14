@@ -1,6 +1,12 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ui
 
+;; better file navigation
+(req_package 'ido-vertical-mode)
+(ido-mode 1)
+(ido-vertical-mode 1)
+;; (setq ido-vertical-define-keys 'C-n-and-C-p-only)
+
 ;; no startup msg  
 (setq inhibit-startup-message t)
 (setq inhibit-startup-screen t)
@@ -74,10 +80,11 @@
 ;; turn on blinking cursor
  (blink-cursor-mode 1)
 
-(provide 'ui-loader)
-
 ;; set default browser
 (setq browse-url-browser-function 'browse-url-chromium)
 
 ;; reload buffers on change
 (global-auto-revert-mode t)
+
+
+(provide 'ui-loader)
