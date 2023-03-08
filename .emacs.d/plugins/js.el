@@ -32,11 +32,18 @@
   ;; Optional - enable lsp-mode automatically in ts files
   :hook (typescript-mode . lsp))
 
-(setq js-indent-level 2)
+
+(use-package lsp-mode
+  :mode ("\\.\\(tsx\\)$" . typescript-mode))
+
+
+;; (setq js-indent-level 2)
+
 
 (defun my-setup-indent ()
   (setq-local js-indent-level 2)
-  (setq-local css-indent-offset 2))
+  (setq-local css-indent-offset 2)
+  (setq tab-width 2))
 
 (add-hook 'js-mode-hook 'my-setup-indent)
 (add-hook 'css-mode-hook 'my-setup-indent)
