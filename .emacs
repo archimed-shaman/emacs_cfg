@@ -40,6 +40,19 @@
 ;; Set PATH
 (setq exec-path (append exec-path '("/home/archimed/.bin" "/home/archimed/.local/bin")))
 
+;; Set default browser to open links in
+(if window-system
+    (setq browse-url-browser-function 'browse-url-generic
+          browse-url-generic-program "vivaldi-stable")
+  (setq browse-url-browser-function 'my-browse))
+
+(defun my-browse (url &rest ignore)
+  "Browse URL using w3m."
+  (interactive "sURL: ")
+  (shell-command (concat "w3m " url))
+  (pop-to-buffer "*Shell Command Output*")
+  (setq truncate-lines t))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; load plugins
 (load-directory "~/.emacs.d/plugins")
@@ -50,10 +63,10 @@
  ;; If there is more than one, they won't work right.
  '(git-gutter:added-sign "+")
  '(git-gutter:deleted-sign "-")
- '(git-gutter:modified-sign " ")
- '(package-selected-packages
-   (quote
-    (go-rename company-c-headers company-irony-c-headers company-irony irony ensime color-theme better-defaults fic-mode git-gutter magit))))
+ '(git-gutter:modified-sign " "))
+; '(package-selected-packages
+;   (quote
+;    (go-rename company-c-headers company-irony-c-headers company-irony irony ensime color-theme better-defaults fic-mode git-gutter magit))))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.

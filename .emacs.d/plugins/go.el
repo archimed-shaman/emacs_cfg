@@ -6,19 +6,19 @@
 (req_package 'lsp-mode)
 (req_package 'auto-complete)
 (req_package 'go-complete)
+(req_package 'go-autocomplete)
 (req_package 'use-package)
+(req_package 'go-snippets)
 
 
 ;; do:
-;; go get -u github.com/nsf/gocode
-;; go get -u golang.org/x/tools/cmd/goimports
-;; go get -u github.com/josharian/impl
-;; go get -u golang.org/x/tools/cmd/godoc
-;; GO111MODULE=on go get golang.org/x/tools/gopls@latest
-;; go get golang.org/x/tools/gopls@latest
-;; GO111MODULE=on go get mvdan.cc/gofumpt
-;; GO111MODULE=on go get mvdan.cc/gofumpt/gofumports
-;; go get -u github.com/dougm/goflymake
+;; go install github.com/nsf/gocode@latest
+;; go install golang.org/x/tools/cmd/goimports@latest
+;; go install github.com/josharian/impl@latest
+;; go install golang.org/x/tools/cmd/godoc@latest
+;; go install golang.org/x/tools/gopls@latest
+;; go install mvdan.cc/gofumpt@latest
+;; go install github.com/dougm/goflymake@latest
 
 (add-hook 'go-mode-hook 'lsp-deferred)
 
