@@ -12,4 +12,12 @@
 ;                                ("\\.puml\\'" . plantuml-mode)))
 (add-to-list 'auto-mode-alist '("\\.puml\\'" . plantuml-mode))
 
+(defun my-plantuml-auto-preview ()
+  (when (eq major-mode 'plantuml-mode)
+    (plantuml-preview 0)))
+
+(add-hook 'after-save-hook 'my-plantuml-auto-preview)
+(add-hook 'find-file-hook 'my-plantuml-auto-preview)
+
+
 (setq plantuml-output-type "png")

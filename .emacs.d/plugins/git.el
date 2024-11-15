@@ -32,5 +32,12 @@
 (set-face-foreground 'git-gutter:added "green")
 (set-face-foreground 'git-gutter:deleted "red")
 
+(defun refresh-git-gutter ()
+  "Refresh git-gutter after saving."
+  (when (bound-and-true-p git-gutter-mode)
+    (git-gutter:update-all-windows)))
+
+(add-hook 'after-save-hook 'refresh-git-gutter)
+
 
 (provide 'git-loader)
