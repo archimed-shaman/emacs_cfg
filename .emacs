@@ -42,8 +42,8 @@
 
 ;; Set default browser to open links in
 (if window-system
-    (setq browse-url-browser-function 'browse-url-generic
-          browse-url-generic-program "vivaldi-stable")
+   (setq browse-url-browser-function 'browse-url-generic
+         browse-url-generic-program "vivaldi")
   (setq browse-url-browser-function 'my-browse))
 
 (defun my-browse (url &rest ignore)
