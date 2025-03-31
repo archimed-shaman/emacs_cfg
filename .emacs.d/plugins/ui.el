@@ -16,9 +16,10 @@
 
 ;; font size for notebook
 (req_package 'better-defaults)
-;(set-face-attribute 'default nil :family "Inconsolata" :height 130 :weight 'bold)
+;; (set-face-attribute 'default nil :family "Inconsolata" :height 130 :weight 'bold)
 ;; (set-face-attribute 'default nil :family "Inconsolata" :height 100 :weight 'bold)
-(set-face-attribute 'default nil :family "iosevka-ss01" :height 100 :weight 'bold)
+;; (set-face-attribute 'default nil :family "iosevka-ss01" :height 100 :weight 'bold)
+(add-to-list 'default-frame-alist '(font . "Source Code Pro-10:bold"))
 
 ;; scroll for one string
 (setq scroll-step 1)
@@ -78,13 +79,17 @@
 (global-set-key (kbd "C-c <down>")  'windmove-down)
 
 ;; turn on blinking cursor
- (blink-cursor-mode 1)
+(blink-cursor-mode 1)
 
 ;; ;; set default browser
 ;; (setq browse-url-browser-function 'browse-url-chromium)
 
 ;; reload buffers on change
 (global-auto-revert-mode t)
+
+
+;; expand window
+(add-hook 'window-setup-hook #'toggle-frame-maximized)
 
 
 (provide 'ui-loader)
