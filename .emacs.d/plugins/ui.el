@@ -91,5 +91,11 @@
 ;; expand window
 (add-hook 'window-setup-hook #'toggle-frame-maximized)
 
+;; disable warning buffer automatic opening
+(setq warning-minimum-level :error)
+(add-to-list 'display-buffer-alist
+             '("\\*Warnings\\*"
+               (display-buffer-no-window)))
+
 
 (provide 'ui-loader)
