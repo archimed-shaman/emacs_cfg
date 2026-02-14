@@ -90,6 +90,70 @@
 ;; C-c c is taken by comment toggle, use C-c C instead
 (global-set-key (kbd "C-c C") claude-code-command-map)
 
+;; emacsclient needs a running server for CLI hooks
+(require 'server)
+(unless (server-running-p) (server-start))
+
+;; --- CLI hooks: auto-open edited files in Emacs ---
+;; Ensure ~/.claude/settings.json has PostToolUse hook that calls emacsclient.
+;; The hook checks CLAUDE_BUFFER_NAME (set only by Emacs) so console sessions
+;; are unaffected.  Runs once at config load; safe to re-run (idempotent).
+(defun my-claude-ensure-cli-hooks ()
+  "Add PostToolUse hook to ~/.claude/settings.json if missing."
+  (let* ((settings-file (expand-file-name "~/.claude/settings.json"))
+         (settings (if (file-exists-p settings-file)
+                       (with-temp-buffer
+                         (insert-file-contents settings-file)
+                         (json-read))
+                     '()))
+         (hook-cmd (concat "bash -c '"
+                           "test -n \"$CLAUDE_BUFFER_NAME\" && "
+                           "emacsclient --eval "
+                           "\"(claude-code-handle-hook (quote post-tool-use) "
+                           "\\\"$CLAUDE_BUFFER_NAME\\\")\" "
+                           "\"$(cat)\" 2>/dev/null || true"
+                           "'"))
+         (hook-entry `((matcher . "")
+                       (hooks . [((type . "command")
+                                  (command . ,hook-cmd))])))
+         (hooks (alist-get 'hooks settings))
+         (post-hooks (alist-get 'PostToolUse hooks)))
+    ;; only add if no PostToolUse hooks exist yet
+    (unless post-hooks
+      (let* ((new-post `(PostToolUse . [,hook-entry]))
+             (new-hooks (if hooks
+                            (cons new-post hooks)
+                          (list new-post)))
+             (new-settings (cons (cons 'hooks new-hooks)
+                                 (assq-delete-all 'hooks settings))))
+        (make-directory (file-name-directory settings-file) t)
+        (with-temp-file settings-file
+          (insert (json-encode new-settings))
+          (json-pretty-print-buffer))))))
+(my-claude-ensure-cli-hooks)
+
+;; When Claude edits a file, open it in the main (non-Claude) window
+(defun my-claude-open-edited-file (message)
+  "Open files modified by Claude in the main editing window."
+  (when (eq (plist-get message :type) 'post-tool-use)
+    (condition-case nil
+        (let* ((json-data (plist-get message :json-data))
+               (parsed (when (and json-data (stringp json-data))
+                         (json-read-from-string json-data)))
+               (tool-name (alist-get 'tool_name parsed))
+               (tool-input (alist-get 'tool_input parsed))
+               (file-path (or (alist-get 'file_path tool-input)
+                              (alist-get 'notebook_path tool-input))))
+          (when (and file-path
+                     (member tool-name '("Edit" "Write" "MultiEdit"))
+                     (file-exists-p file-path))
+            (let ((buf (find-file-noselect file-path)))
+              ;; show in a non-side-window, don't steal focus
+              (display-buffer buf '((display-buffer-use-some-window)
+                                    (inhibit-same-window . t))))))
+      (error nil))))
+(add-hook 'claude-code-event-hook #'my-claude-open-edited-file)
+
 ;; Linux notifications
 (defun my-claude-notify (title message)
   (if (executable-find "notify-send")
