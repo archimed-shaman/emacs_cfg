@@ -34,6 +34,12 @@
   (package-install 'eat))
 (require 'eat)
 
+;; VC-installed packages: pin to "manual" so package-upgrade-all doesn't
+;; replace them with same-named MELPA packages (e.g. yuya373/claude-code-emacs).
+;; Update these via M-x package-vc-upgrade instead.
+(dolist (pkg '(inheritenv claude-code monet))
+  (add-to-list 'package-pinned-packages (cons pkg "manual")))
+
 ;; environment inheritance for subprocesses
 (unless (package-installed-p 'inheritenv)
   (package-vc-install "https://github.com/purcell/inheritenv"))
@@ -60,7 +66,11 @@
                                       '((display-buffer-in-side-window)
                                         (side . right)
                                         (window-width . 0.4)))))
-          (when window (select-window window))
+          (when window
+            (select-window window)
+            ;; side window creation doesn't trigger window-size-change-functions,
+            ;; so vterm never gets the resize signal; force it
+            (run-at-time 0.2 nil #'window--adjust-process-windows))
           window)))
 
 ;; vterm handles window resize better than eat in vertical splits
@@ -69,6 +79,13 @@
 
 ;; let terminal handle resize natively, the optimization breaks vertical splits
 (setq claude-code-optimize-window-resize nil)
+
+;; default 0.1s is too short — Claude renders before vterm resize arrives
+(setq claude-code-startup-delay 0.5)
+
+;; line numbers make no sense in a terminal and mess up vterm width calculation
+(add-hook 'claude-code-start-hook
+          (lambda () (display-line-numbers-mode -1)))
 
 ;; C-c c is taken by comment toggle, use C-c C instead
 (global-set-key (kbd "C-c C") claude-code-command-map)
