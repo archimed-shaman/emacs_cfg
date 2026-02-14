@@ -1,8 +1,55 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ui
 
-;; better file navigation (built-in since Emacs 30)
-(fido-vertical-mode 1)
+;; completion UI: vertico + orderless + marginalia + consult
+;;
+;; vertico     — vertical completion list in minibuffer
+;; orderless   — match space-separated words in any order
+;; marginalia  — annotations next to candidates (file size, docstring, etc.)
+;; consult     — enhanced commands with live preview:
+;;   C-x b     — consult-buffer (buffers + recent files + bookmarks)
+;;   C-s       — consult-line (search current buffer with live preview)
+;;   M-g g     — consult-goto-line
+;;   M-s r     — consult-ripgrep (project-wide search, needs ripgrep)
+
+(req_package 'vertico)
+(vertico-mode 1)
+
+;; Backspace deletes path component instead of single char
+(require 'vertico-directory)
+(define-key vertico-map (kbd "DEL") #'vertico-directory-delete-char)
+(define-key vertico-map (kbd "M-DEL") #'vertico-directory-delete-word)
+
+(req_package 'orderless)
+(setq completion-styles '(orderless basic)
+      completion-category-overrides '((file (styles basic partial-completion))))
+
+(req_package 'marginalia)
+(marginalia-mode 1)
+
+(req_package 'consult)
+(global-set-key (kbd "C-x b") #'consult-buffer)
+(global-set-key (kbd "C-s") #'consult-line)
+(global-set-key (kbd "M-g g") #'consult-goto-line)
+(global-set-key (kbd "M-s r") #'consult-ripgrep)
+
+;; vertico/consult/orderless faces — tango-dark palette
+(custom-set-faces
+ ;; current candidate
+ '(vertico-current ((t (:background "#555753" :foreground "#eeeeec"))))
+ ;; orderless match highlights
+ '(orderless-match-face-0 ((t (:foreground "#8ae234" :weight bold))))
+ '(orderless-match-face-1 ((t (:foreground "#729fcf" :weight bold))))
+ '(orderless-match-face-2 ((t (:foreground "#fcaf3e" :weight bold))))
+ '(orderless-match-face-3 ((t (:foreground "#e090d7" :weight bold))))
+ ;; marginalia annotations
+ '(marginalia-documentation ((t (:foreground "#888a85"))))
+ '(marginalia-file-priv-dir ((t (:foreground "#729fcf"))))
+ '(marginalia-size ((t (:foreground "#888a85"))))
+ '(marginalia-date ((t (:foreground "#888a85"))))
+ ;; consult preview line
+ '(consult-preview-line ((t (:background "#3e4446"))))
+ '(consult-preview-match ((t (:background "#ce5c00" :foreground "#eeeeec")))))
 
 ;; no startup msg  
 (setq inhibit-startup-message t)
