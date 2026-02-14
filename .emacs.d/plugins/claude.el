@@ -30,7 +30,31 @@
   (package-vc-install "https://github.com/stevemolitor/claude-code.el"))
 (require 'claude-code)
 
+;; IDE integration: open files, show diffs, diagnostics in Emacs
+(unless (package-installed-p 'monet)
+  (package-vc-install "https://github.com/stevemolitor/monet"))
+(require 'monet)
+(monet-mode 1)
+
 (claude-code-mode)
+(add-hook 'claude-code-process-environment-functions #'monet-start-server-function)
+
+;; split vertically (right side) instead of horizontal (below)
+(setq claude-code-display-window-fn
+      (lambda (buffer)
+        (let ((window (display-buffer buffer
+                                      '((display-buffer-in-side-window)
+                                        (side . right)
+                                        (window-width . 0.4)))))
+          (when window (select-window window))
+          window)))
+
+;; vterm handles window resize better than eat in vertical splits
+(req_package 'vterm)
+(setq claude-code-terminal-backend 'vterm)
+
+;; let terminal handle resize natively, the optimization breaks vertical splits
+(setq claude-code-optimize-window-resize nil)
 
 ;; C-c c занят под comment toggle, используем C-c C
 (global-set-key (kbd "C-c C") claude-code-command-map)
