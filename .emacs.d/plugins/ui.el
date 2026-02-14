@@ -1,11 +1,8 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ui
 
-;; better file navigation
-(req_package 'ido-vertical-mode)
-(ido-mode 1)
-(ido-vertical-mode 1)
-;; (setq ido-vertical-define-keys 'C-n-and-C-p-only)
+;; better file navigation (built-in since Emacs 30)
+(fido-vertical-mode 1)
 
 ;; no startup msg  
 (setq inhibit-startup-message t)

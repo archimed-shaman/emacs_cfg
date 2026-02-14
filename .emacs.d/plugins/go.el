@@ -1,39 +1,17 @@
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; go
+;;
+;; LSP server: gopls
+;; Install:
+;;   go install golang.org/x/tools/gopls@latest
+;;   go install mvdan.cc/gofumpt@latest
 
 (req_package 'go-mode)
 (req_package 'flycheck)
 (req_package 'lsp-mode)
-(req_package 'auto-complete)
-(req_package 'go-complete)
-(req_package 'go-autocomplete)
-(req_package 'use-package)
 (req_package 'go-snippets)
 
-
-;; do:
-;; go install github.com/nsf/gocode@latest
-;; go install golang.org/x/tools/cmd/goimports@latest
-;; go install github.com/josharian/impl@latest
-;; go install golang.org/x/tools/cmd/godoc@latest
-;; go install golang.org/x/tools/gopls@latest
-;; go install mvdan.cc/gofumpt@latest
-;; go install github.com/dougm/goflymake@latest
-
-(add-hook 'go-mode-hook 'lsp-deferred)
-
-
-;; On-fly error check
-;(require 'go-flymake)
-;(require 'go-flycheck)
-
-
-;(ac-config-default)
-;(global-auto-complete-mode t)
-;; Autocomplete
-(require 'go-autocomplete)
-;;(require 'auto-complete-config)
-;(auto-complete-mode 1)
+(add-hook 'go-mode-hook #'lsp-deferred)
 
 (add-to-list 'yas-snippet-dirs "~/.emacs.d/yasnippet-golang/")
 (yas-reload-all)
