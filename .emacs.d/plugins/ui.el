@@ -98,4 +98,12 @@
                (display-buffer-no-window)))
 
 
+;; company tooltip colors
+(set-face-attribute 'company-preview nil :foreground "darkgray" :underline t)
+(set-face-attribute 'company-preview-common nil :inherit 'company-preview)
+(set-face-attribute 'company-tooltip nil :background "lightgray" :foreground "black")
+(set-face-attribute 'company-tooltip-common nil :inherit 'company-tooltip :weight 'bold)
+(set-face-attribute 'company-tooltip-common-selection nil :inherit 'company-tooltip-selection :weight 'bold)
+(set-face-attribute 'company-tooltip-selection nil :background "steelblue" :foreground "white")
+
 (provide 'ui-loader)
