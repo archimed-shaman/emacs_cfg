@@ -16,7 +16,6 @@
 ;; provide package loader
 (require 'package)
 (setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
-                         ("marmalade" . "https://marmalade-repo.org/packages/")
                          ("melpa" . "http://melpa.org/packages/")
 			 ;;("melpa-stable" . "http://stable.melpa.org/packages/")
 			 ))
@@ -61,9 +60,11 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(git-gutter:added-sign "+")
- '(git-gutter:deleted-sign "-")
- '(git-gutter:modified-sign " "))
+ '(package-vc-selected-packages
+   '((claude-code :vc-backend Git :url
+		  "https://github.com/stevemolitor/claude-code.el")
+     (inheritenv :vc-backend Git :url
+		 "https://github.com/purcell/inheritenv"))))
 ; '(package-selected-packages
 ;   (quote
 ;    (go-rename company-c-headers company-irony-c-headers company-irony irony ensime color-theme better-defaults fic-mode git-gutter magit))))
@@ -72,12 +73,7 @@
  ;; If you edit it by hand, you could mess it up, so be careful.
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
- '(company-preview ((t (:foreground "darkgray" :underline t))))
- '(company-preview-common ((t (:inherit company-preview))))
- '(company-tooltip ((t (:background "lightgray" :foreground "black"))))
- '(company-tooltip-common ((((type x)) (:inherit company-tooltip :weight bold)) (t (:inherit company-tooltip))))
- '(company-tooltip-common-selection ((((type x)) (:inherit company-tooltip-selection :weight bold)) (t (:inherit company-tooltip-selection))))
- '(company-tooltip-selection ((t (:background "steelblue" :foreground "white")))))
+ )
 
 
 ;; Update pluguns
