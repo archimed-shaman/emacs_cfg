@@ -134,7 +134,8 @@
 
 ;; When Claude edits a file, open it in the main (non-Claude) window
 (defun my-claude-open-edited-file (message)
-  "Open files modified by Claude in the main editing window."
+  "Open files modified by Claude in the main editing window.
+Reverts the buffer to pick up changes, then scrolls to the first edit."
   (when (eq (plist-get message :type) 'post-tool-use)
     (condition-case nil
         (let* ((json-data (plist-get message :json-data))
@@ -147,10 +148,34 @@
           (when (and file-path
                      (member tool-name '("Edit" "Write" "MultiEdit"))
                      (file-exists-p file-path))
-            (let ((buf (find-file-noselect file-path)))
+            (let* ((buf (find-file-noselect file-path))
+                   ;; extract search target: new_string from Edit, first edit from MultiEdit
+                   (search-str
+                    (cond
+                     ((string= tool-name "Edit")
+                      (alist-get 'new_string tool-input))
+                     ((string= tool-name "MultiEdit")
+                      (let ((edits (alist-get 'edits tool-input)))
+                        (when (and edits (> (length edits) 0))
+                          (alist-get 'new_string (aref edits 0)))))
+                     (t nil)))
+                   ;; use just the first line of the new text for search
+                   (search-line
+                    (when (and search-str (not (string-empty-p search-str)))
+                      (car (split-string search-str "\n" t)))))
+              ;; revert buffer to pick up Claude's changes
+              (with-current-buffer buf
+                (revert-buffer t t t))
               ;; show in a non-side-window, don't steal focus
-              (display-buffer buf '((display-buffer-use-some-window)
-                                    (inhibit-same-window . t))))))
+              (let ((win (display-buffer buf '((display-buffer-use-some-window)
+                                               (inhibit-same-window . t)))))
+                ;; scroll to first change
+                (when (and search-line win)
+                  (with-selected-window win
+                    (goto-char (point-min))
+                    (when (search-forward search-line nil t)
+                      (beginning-of-line)
+                      (recenter 3))))))))
       (error nil))))
 (add-hook 'claude-code-event-hook #'my-claude-open-edited-file)
 
