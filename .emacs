@@ -61,10 +61,7 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(package-vc-selected-packages
-   '((claude-code :vc-backend Git :url
-		  "https://github.com/stevemolitor/claude-code.el")
-     (inheritenv :vc-backend Git :url
-		 "https://github.com/purcell/inheritenv"))))
+   '((monet :vc-backend Git :url "https://github.com/stevemolitor/monet"))))
 ; '(package-selected-packages
 ;   (quote
 ;    (go-rename company-c-headers company-irony-c-headers company-irony irony ensime color-theme better-defaults fic-mode git-gutter magit))))
