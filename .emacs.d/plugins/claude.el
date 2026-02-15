@@ -147,7 +147,7 @@
   "Open files modified by Claude in the main editing window.
 Scrolls to the first edited line."
   (when (eq (plist-get message :type) 'post-tool-use)
-    (condition-case nil
+    (condition-case _err
         (let* ((json-data (plist-get message :json-data))
                (parsed (when (and json-data (stringp json-data))
                          (json-read-from-string json-data)))
@@ -156,6 +156,7 @@ Scrolls to the first edited line."
                (file-path (or (alist-get 'file_path tool-input)
                               (alist-get 'notebook_path tool-input))))
           (when (and file-path
+                     (stringp file-path)
                      (member tool-name '("Edit" "Write" "MultiEdit"))
                      (file-exists-p file-path))
             (let* ((buf (find-file-noselect file-path))
@@ -169,7 +170,8 @@ Scrolls to the first edited line."
                           (alist-get 'new_string (aref edits 0)))))
                      (t nil)))
                    (search-line
-                    (when (and search-str (not (string-empty-p search-str)))
+                    (when (and search-str (stringp search-str)
+                               (> (length search-str) 0))
                       (car (split-string search-str "\n" t))))
                    (win (display-buffer buf '((display-buffer-use-some-window)
                                               (inhibit-same-window . t)))))
