@@ -131,6 +131,13 @@
 ;; reload buffers on change
 (global-auto-revert-mode t)
 
+;; no lock files (.#filename) — they break file watchers, linters, build tools
+(setq create-lockfiles nil)
+
+;; keep backup~ and #auto-save# files out of project directories
+(setq backup-directory-alist `((".*" . ,temporary-file-directory))
+      auto-save-file-name-transforms `((".*" ,temporary-file-directory t)))
+
 
 ;; expand window
 (add-hook 'window-setup-hook #'toggle-frame-maximized)
