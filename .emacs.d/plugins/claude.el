@@ -26,6 +26,9 @@
 ;;   C-c C z   — toggle read-only mode
 ;;   C-c C M   — cycle mode (default/auto-accept/plan)
 ;;   C-c C /   — slash commands menu
+;;
+;; After starting a session, run /ide inside Claude to enable monet
+;; integration (auto-open edited files, diffs, diagnostics in Emacs).
 
 ;; NonGNU ELPA needed for eat
 (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
@@ -55,6 +58,12 @@
   (package-vc-install "https://github.com/stevemolitor/monet"))
 (require 'monet)
 (monet-mode 1)
+
+;; show monet diffs at the bottom of the frame, not as a vertical split
+(add-to-list 'display-buffer-alist
+             '("\\*Diff:.*\\*"
+               (display-buffer-at-bottom)
+               (window-height . 0.4)))
 
 (claude-code-mode)
 (add-hook 'claude-code-process-environment-functions #'monet-start-server-function)
@@ -90,14 +99,14 @@
 ;; C-c c is taken by comment toggle, use C-c C instead
 (global-set-key (kbd "C-c C") claude-code-command-map)
 
-;; emacsclient needs a running server for CLI hooks
+;; emacsclient needed by monet for IDE integration and CLI hooks
 (require 'server)
 (unless (server-running-p) (server-start))
 
-;; --- CLI hooks: auto-open edited files in Emacs ---
 ;; Ensure ~/.claude/settings.json has PostToolUse hook that calls emacsclient.
-;; The hook checks CLAUDE_BUFFER_NAME (set only by Emacs) so console sessions
-;; are unaffected.  Runs once at config load; safe to re-run (idempotent).
+;; CLAUDE_BUFFER_NAME is only set by Emacs sessions, so console Claude is
+;; unaffected.  Runs once at config load; idempotent and portable — just pull
+;; this config on another machine and it works.
 (defun my-claude-ensure-cli-hooks ()
   "Add PostToolUse hook to ~/.claude/settings.json if missing."
   (let* ((settings-file (expand-file-name "~/.claude/settings.json"))
@@ -118,7 +127,6 @@
                                   (command . ,hook-cmd))])))
          (hooks (alist-get 'hooks settings))
          (post-hooks (alist-get 'PostToolUse hooks)))
-    ;; only add if no PostToolUse hooks exist yet
     (unless post-hooks
       (let* ((new-post `(PostToolUse . [,hook-entry]))
              (new-hooks (if hooks
@@ -132,10 +140,12 @@
           (json-pretty-print-buffer))))))
 (my-claude-ensure-cli-hooks)
 
-;; When Claude edits a file, open it in the main (non-Claude) window
+;; When Claude edits a file, open it in the main (non-side) window
+;; and scroll to the first change.  Only fires for the current Emacs
+;; session (claude-code-event-hook is internal, unlike the old CLI hook).
 (defun my-claude-open-edited-file (message)
   "Open files modified by Claude in the main editing window.
-Reverts the buffer to pick up changes, then scrolls to the first edit."
+Scrolls to the first edited line."
   (when (eq (plist-get message :type) 'post-tool-use)
     (condition-case nil
         (let* ((json-data (plist-get message :json-data))
@@ -149,7 +159,6 @@ Reverts the buffer to pick up changes, then scrolls to the first edit."
                      (member tool-name '("Edit" "Write" "MultiEdit"))
                      (file-exists-p file-path))
             (let* ((buf (find-file-noselect file-path))
-                   ;; extract search target: new_string from Edit, first edit from MultiEdit
                    (search-str
                     (cond
                      ((string= tool-name "Edit")
@@ -159,23 +168,17 @@ Reverts the buffer to pick up changes, then scrolls to the first edit."
                         (when (and edits (> (length edits) 0))
                           (alist-get 'new_string (aref edits 0)))))
                      (t nil)))
-                   ;; use just the first line of the new text for search
                    (search-line
                     (when (and search-str (not (string-empty-p search-str)))
-                      (car (split-string search-str "\n" t)))))
-              ;; revert buffer to pick up Claude's changes
-              (with-current-buffer buf
-                (revert-buffer t t t))
-              ;; show in a non-side-window, don't steal focus
-              (let ((win (display-buffer buf '((display-buffer-use-some-window)
-                                               (inhibit-same-window . t)))))
-                ;; scroll to first change
-                (when (and search-line win)
-                  (with-selected-window win
-                    (goto-char (point-min))
-                    (when (search-forward search-line nil t)
-                      (beginning-of-line)
-                      (recenter 3))))))))
+                      (car (split-string search-str "\n" t))))
+                   (win (display-buffer buf '((display-buffer-use-some-window)
+                                              (inhibit-same-window . t)))))
+              (when (and search-line win)
+                (with-selected-window win
+                  (goto-char (point-min))
+                  (when (search-forward search-line nil t)
+                    (beginning-of-line)
+                    (recenter 3)))))))
       (error nil))))
 (add-hook 'claude-code-event-hook #'my-claude-open-edited-file)
 

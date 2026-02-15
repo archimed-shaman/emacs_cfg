@@ -128,7 +128,8 @@
 ;; ;; set default browser
 ;; (setq browse-url-browser-function 'browse-url-chromium)
 
-;; reload buffers on change
+;; reload buffers on change silently
+(setq auto-revert-verbose nil)
 (global-auto-revert-mode t)
 
 ;; no lock files (.#filename) — they break file watchers, linters, build tools
