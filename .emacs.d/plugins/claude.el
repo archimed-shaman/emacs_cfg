@@ -159,7 +159,11 @@ Scrolls to the first edited line."
                      (stringp file-path)
                      (member tool-name '("Edit" "Write" "MultiEdit"))
                      (file-exists-p file-path))
-            (let* ((buf (find-file-noselect file-path))
+            (let* ((buf (find-file-noselect file-path t)) ; nowarn
+                   (_revert (when (and (buffer-file-name buf)
+                                       (not (verify-visited-file-modtime buf)))
+                              (with-current-buffer buf
+                                (revert-buffer t t t))))
                    (search-str
                     (cond
                      ((string= tool-name "Edit")
