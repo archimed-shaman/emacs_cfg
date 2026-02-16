@@ -32,6 +32,13 @@ PACMAN_SCALA=(
     sbt                             # Scala build tool (metals auto-installed by lsp-metals)
     jdk-openjdk                     # Java SDK for sbt/metals/plantuml
 )
+PACMAN_TERRAFORM=(
+    terraform                       # Terraform CLI (format on save)
+    tflint                          # provider-aware Terraform linter
+)
+AUR_TERRAFORM=(
+    terraform-ls-bin                # HashiCorp LSP server (validation, completion, hover)
+)
 PACMAN_SQL=(
     pgformatter                     # pg_format SQL formatter
 )
@@ -112,6 +119,10 @@ install_pacman "${PACMAN_CPP[@]}"
 
 info "=== Scala ==="
 install_pacman "${PACMAN_SCALA[@]}"
+
+info "=== Terraform ==="
+install_pacman "${PACMAN_TERRAFORM[@]}"
+install_aur "${AUR_TERRAFORM[@]}"
 
 info "=== SQL ==="
 install_pacman "${PACMAN_SQL[@]}"
