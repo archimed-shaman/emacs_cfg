@@ -71,8 +71,13 @@
 ;; scroll for one string
 (setq scroll-step 1)
 
-;; current line higliting
+;; current line highlighting
 (global-hl-line-mode 1)
+;; global-hl-line-highlight sits on the global post-command-hook and causes
+;; flickering in vterm on every keystroke; skip it entirely for vterm buffers
+(define-advice global-hl-line-highlight (:before-while () skip-vterm)
+  "Don't run hl-line highlight in vterm buffers."
+  (not (derived-mode-p 'vterm-mode)))
 
 ;; save session
 ;; (desktop-save-mode t)
