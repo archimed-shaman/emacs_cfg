@@ -68,8 +68,10 @@
 ;; scroll for one string
 (setq scroll-step 1)
 
-;; scroll for one string
-(setq scroll-step 1)
+;; center cursor after PgUp/PgDn and jumps
+(setq scroll-preserve-screen-position t)
+(advice-add 'scroll-up-command :after (lambda (&rest _) (recenter)))
+(advice-add 'scroll-down-command :after (lambda (&rest _) (recenter)))
 
 ;; current line highlighting
 (global-hl-line-mode 1)
