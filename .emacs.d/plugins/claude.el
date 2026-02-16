@@ -143,12 +143,22 @@
 ;; When Claude edits a file, open it in the main (non-side) window
 ;; and scroll to the first change.  Only fires for the current Emacs
 ;; session (claude-code-event-hook is internal, unlike the old CLI hook).
+(defun my-claude--find-frame-for-buffer (buffer-name)
+  "Find the frame that displays BUFFER-NAME (the Claude terminal)."
+  (let ((buf (get-buffer buffer-name)))
+    (when buf
+      (cl-loop for frame in (frame-list)
+               when (get-buffer-window buf frame)
+               return frame))))
+
 (defun my-claude-open-edited-file (message)
-  "Open files modified by Claude in the main editing window.
+  "Open files modified by Claude in the same frame as the Claude session.
 Scrolls to the first edited line."
   (when (eq (plist-get message :type) 'post-tool-use)
     (condition-case _err
-        (let* ((json-data (plist-get message :json-data))
+        (let* ((claude-buf-name (plist-get message :buffer-name))
+               (target-frame (my-claude--find-frame-for-buffer claude-buf-name))
+               (json-data (plist-get message :json-data))
                (parsed (when (and json-data (stringp json-data))
                          (json-read-from-string json-data)))
                (tool-name (alist-get 'tool_name parsed))
@@ -157,34 +167,36 @@ Scrolls to the first edited line."
                               (alist-get 'notebook_path tool-input))))
           (when (and file-path
                      (stringp file-path)
+                     target-frame
                      (member tool-name '("Edit" "Write" "MultiEdit"))
                      (file-exists-p file-path))
-            (let* ((buf (find-file-noselect file-path t)) ; nowarn
-                   (_revert (when (and (buffer-file-name buf)
-                                       (not (verify-visited-file-modtime buf)))
-                              (with-current-buffer buf
-                                (revert-buffer t t t))))
-                   (search-str
-                    (cond
-                     ((string= tool-name "Edit")
-                      (alist-get 'new_string tool-input))
-                     ((string= tool-name "MultiEdit")
-                      (let ((edits (alist-get 'edits tool-input)))
-                        (when (and edits (> (length edits) 0))
-                          (alist-get 'new_string (aref edits 0)))))
-                     (t nil)))
-                   (search-line
-                    (when (and search-str (stringp search-str)
-                               (> (length search-str) 0))
-                      (car (split-string search-str "\n" t))))
-                   (win (display-buffer buf '((display-buffer-use-some-window)
-                                              (inhibit-same-window . t)))))
-              (when (and search-line win)
-                (with-selected-window win
-                  (goto-char (point-min))
-                  (when (search-forward search-line nil t)
-                    (beginning-of-line)
-                    (recenter 3)))))))
+            (with-selected-frame target-frame
+              (let* ((buf (find-file-noselect file-path t)) ; nowarn
+                     (_revert (when (and (buffer-file-name buf)
+                                         (not (verify-visited-file-modtime buf)))
+                                (with-current-buffer buf
+                                  (revert-buffer t t t))))
+                     (search-str
+                      (cond
+                       ((string= tool-name "Edit")
+                        (alist-get 'new_string tool-input))
+                       ((string= tool-name "MultiEdit")
+                        (let ((edits (alist-get 'edits tool-input)))
+                          (when (and edits (> (length edits) 0))
+                            (alist-get 'new_string (aref edits 0)))))
+                       (t nil)))
+                     (search-line
+                      (when (and search-str (stringp search-str)
+                                 (> (length search-str) 0))
+                        (car (split-string search-str "\n" t))))
+                     (win (display-buffer buf '((display-buffer-use-some-window)
+                                                (inhibit-same-window . t)))))
+                (when (and search-line win)
+                  (with-selected-window win
+                    (goto-char (point-min))
+                    (when (search-forward search-line nil t)
+                      (beginning-of-line)
+                      (recenter 3))))))))
       (error nil))))
 (add-hook 'claude-code-event-hook #'my-claude-open-edited-file)
 
