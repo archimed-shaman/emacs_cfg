@@ -127,8 +127,16 @@
 (global-set-key (kbd "C-c <up>")    'windmove-up)
 (global-set-key (kbd "C-c <down>")  'windmove-down)
 
-;; turn on blinking cursor
+;; turn on blinking cursor (0 = blink forever)
 (blink-cursor-mode 1)
+(setq blink-cursor-blinks 0)
+
+;; claude-code.el does (setq-local blink-cursor-mode nil) which kills
+;; global blinking; undo that after its vterm setup runs
+(with-eval-after-load 'claude-code
+  (advice-add 'claude-code--term-configure :after
+              (lambda (&rest _)
+                (kill-local-variable 'blink-cursor-mode))))
 
 ;; ;; set default browser
 ;; (setq browse-url-browser-function 'browse-url-chromium)
