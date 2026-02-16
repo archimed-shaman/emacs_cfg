@@ -29,6 +29,10 @@
 ;;
 ;; After starting a session, run /ide inside Claude to enable monet
 ;; integration (auto-open edited files, diffs, diagnostics in Emacs).
+;;
+;; Copying from Claude buffer: vterm captures all keys, so M-w won't
+;; work directly.  Use C-c C z (toggle read-only mode) first, then
+;; select text and M-w as usual.  C-c C z again to resume input.
 
 ;; NonGNU ELPA needed for eat
 (add-to-list 'package-archives '("nongnu" . "https://elpa.nongnu.org/nongnu/"))
