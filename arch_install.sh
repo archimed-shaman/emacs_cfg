@@ -11,6 +11,7 @@ PACMAN_CORE=(
     libnotify                       # notify-send for desktop notifications
     ripgrep                         # fast search, used by consult-ripgrep
     adobe-source-code-pro-fonts     # default UI font
+    ttf-sourcecodepro-nerd          # Nerd Font variant for doom-modeline icons
 )
 
 # --- Languages & their tooling ---
