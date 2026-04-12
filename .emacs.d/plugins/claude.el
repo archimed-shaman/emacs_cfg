@@ -100,6 +100,48 @@
 (add-hook 'claude-code-start-hook
           (lambda () (display-line-numbers-mode -1)))
 
+;; vterm copy fix: replace vterm's fake-newline filter with a smarter one.
+;; vterm marks newlines with `vterm-line-wrap' to tag line-wrap artifacts,
+;; but misidentifies real newlines when a line fills near terminal width.
+;; Our filter only removes a tagged newline if the preceding content
+;; actually fills the terminal width; otherwise keeps it.  Also strips
+;; trailing whitespace (terminal grid padding).
+(defun my-vterm-smart-copy-filter (content)
+  "Remove only genuinely fake newlines and strip trailing whitespace."
+  (let ((width (window-body-width)))
+    (with-temp-buffer
+      (insert content)
+      ;; collect positions of newlines tagged vterm-line-wrap
+      ;; where preceding content truly fills terminal width
+      (let (kill-positions)
+        (goto-char (point-min))
+        (while (< (point) (point-max))
+          (when (and (eq (char-after) ?\n)
+                     (get-text-property (point) 'vterm-line-wrap))
+            (let* ((bol (line-beginning-position))
+                   (trimmed-len (length (string-trim-right
+                                         (buffer-substring-no-properties bol (point))))))
+              (when (>= trimmed-len width)
+                (push (point) kill-positions))))
+          (forward-char 1))
+        ;; delete in reverse so positions stay valid
+        (dolist (pos (sort kill-positions #'>))
+          (goto-char pos)
+          (delete-char 1)))
+      ;; strip trailing whitespace
+      (goto-char (point-min))
+      (while (re-search-forward "[[:blank:]]+$" nil t)
+        (replace-match ""))
+      (buffer-string))))
+
+(defun my-vterm-fix-copy ()
+  "Replace vterm copy filter with a smarter version."
+  (remove-function (local 'filter-buffer-substring-function)
+                   #'vterm--filter-buffer-substring)
+  (add-function :filter-return (local 'filter-buffer-substring-function)
+                #'my-vterm-smart-copy-filter))
+(add-hook 'vterm-mode-hook #'my-vterm-fix-copy)
+
 ;; C-c c is taken by comment toggle, use C-c C instead
 (global-set-key (kbd "C-c C") claude-code-command-map)
 
