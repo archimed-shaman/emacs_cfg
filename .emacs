@@ -32,9 +32,13 @@
 
  (defun req_package (package_name)
    (unless (package-installed-p package_name)
-     (package-install package_name))
-     (require package_name)
-     )
+     (condition-case nil
+         (package-install package_name)
+       (error
+        ;; Stale archive cache (e.g. MELPA dropped the old tarball) — refresh and retry
+        (package-refresh-contents)
+        (package-install package_name))))
+   (require package_name))
 
 ;; Set PATH
 (setq exec-path (append exec-path '("/home/archimed/.bin" "/home/archimed/.local/bin")))
